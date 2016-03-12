@@ -21,7 +21,7 @@ To derive the location of busstops out of the given activity points, following p
 
 **_1. Step: Cleaning Data_**
 
-First of all, the activity have been cleaned, to remove the influence of point which may introduce errors. All points were removed which 
+First of all, the activity points have been cleaned, to remove the influence of point which may introduce errors. All points were removed which 
 - have a speed greater than 200km/h
 - have an accuracy greater than 80 m
 
@@ -31,7 +31,7 @@ Points which are close to each other, are assigned to a cluster. The cluster id 
 
 **_3. Step: Check properties of each cluster_**
 
-For each cluster of activity different properties are checked in order to detect bus stops. Following criteria are checked:
+For each cluster of activity points, different properties are checked in order to detect bus stops. Following criteria are checked:
 
     criterion 1: minimum number of points
     criterion 2: minimum confidence  
@@ -60,7 +60,7 @@ The algorithm may be trained and improvement by adjusting following parameters:
 
 **_Layer 'Bus Stops'_**
 
-This Layer shows the derived bus stops. By clicking in the markers, the properties are displayed:
+This Layer shows the bus stops derived. By clicking on the markers, the properties are displayed:
 
 - percentage: shows the percentage from criterion 5 (see above) 
 - nr_points: shows the number of points, which were members of the cluster of which this bus stop location was derived.
