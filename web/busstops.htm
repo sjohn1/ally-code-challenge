@@ -1,0 +1,87 @@
+<html>
+<head>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+ 
+</head>
+<body>
+<div id="map" style="height:100%;"></div>
+
+<script src="../data/data.js" type="text/javascript"></script>
+<script>
+//prepare properties for popup
+//prepare properties for popup
+function onEachFeature(feature, layer) {
+ if (feature.properties) {
+     var popupContent = [];
+     for (var p in feature.properties) {
+         popupContent.push(p + ": " + feature.properties[p]);
+     }
+
+     layer.bindPopup(popupContent.join("<br />"));
+ }
+}
+//option for point markers
+var pointMarkerOptions = {
+ radius: 8,
+ fillColor: "#ff7800",
+ color: "#000",
+ weight: 1,
+ opacity: 1,
+ fillOpacity: 0.8
+};
+
+//prepare basemap layers
+googleHybrid = new L.TileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+ maxZoom: 20,
+ subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+});
+osmTranspLayer = new L.TileLayer('https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
+ maxZoom: 18
+});
+
+//prepare overlay layers
+busstopLyr = L.geoJson(busstops, {
+ onEachFeature: onEachFeature
+});
+clusteredLyr = L.geoJson(clustered, {
+ onEachFeature: onEachFeature,
+ pointToLayer: function(feature, latlng) {
+     pointMarkerOptions.fillColor = feature.properties.color
+     return L.circleMarker(latlng, pointMarkerOptions);
+ }
+});
+rawLyr = L.geoJson(raw, {
+ onEachFeature: onEachFeature,
+ pointToLayer: function(feature, latlng) {
+     pointMarkerOptions.fillColor = "#ff7800"
+     return L.circleMarker(latlng, pointMarkerOptions);
+ }
+});
+
+//create map
+var map = L.map('map', {
+ center: [-6.804642, 39.269384],
+ zoom: 12,
+ layers: [osmTranspLayer, busstopLyr]
+});
+
+var baseMaps = {
+ "OSM Transport": osmTranspLayer,
+ "Google Hybrid": googleHybrid
+};
+var overlayMaps = {
+ "Bus Stops": busstopLyr,
+ "Clustered Raw Data": clusteredLyr,
+ "Raw Data": rawLyr
+
+};
+//add layers to map
+L.control.layers(baseMaps, overlayMaps).addTo(map);
+</script>
+
+
+</body>
+
+
+</html>
