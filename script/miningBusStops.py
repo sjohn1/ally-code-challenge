@@ -16,9 +16,8 @@ from scipy.cluster.hierarchy import linkage, fcluster
 
 import numpy as np
 
-PATH_DATA='C:/Users/Steffen/workspace/busstops/data/'
+PATH_DATA='../data/'
 FILE_POINTS='activity_points.geojson'
-FILE_ROUTES='routes.geojson'
 
 
 
@@ -71,14 +70,13 @@ def main(args):
     # prepare js output
     js = ''
     # read activity points
-    points = loadData(os.path.join(PATH_DATA,FILE_POINTS))
+    points = loadData(os.path.join(os.path.dirname(__file__),os.path.join(PATH_DATA,FILE_POINTS)))
     
     # appand raw data to js output for visualization
     js = appendToJsOutput(js, 'raw', points)
     
     geom = []
-    pointList = []
-   
+    
     for p in points['features']:
         # remove points which may introduce errors.
         if p['properties']['speed']>200 or p['properties']['accuracy']>80:
@@ -116,7 +114,6 @@ def main(args):
     js = appendToJsOutput(js, 'clustered', points)
     
     # prepare busstop output
-    busstops = dict()
     
     busstops = {"crs":{"type":"name", 
                        "properties":{  
@@ -135,7 +132,7 @@ def main(args):
                 a) on_foot
                 b) on_bicycle
                 c) still
-    criterion 5: minimum percentage of points which meet criterion 2
+    criterion 5: minimum percentage of points which meet criteria 2-4
     '''
     # Criterion 1: minimum number of points
     min_points=4
@@ -152,7 +149,6 @@ def main(args):
                 speed=props['speed']
                 prev=props['previous_dominating_activity']
                 conf_prev = props['previous_dominating_activity_confidence']
-                conf_cur =  props['current_dominating_activity_confidence']
                 
                 if (conf_prev >= min_confidence  and speed < max_speed and
                         (prev =='on_foot'
@@ -171,11 +167,11 @@ def main(args):
     js = appendToJsOutput(js, 'busstops', busstops)
     
     jsfile = 'data.js'
-    writer = open(os.path.join(PATH_DATA,jsfile), 'w')
+    writer = open( os.path.join(os.path.dirname(__file__),os.path.join(PATH_DATA,jsfile)), 'w')
     writer.write(js)        
     writer.close()
     
-    writeOutputData(busstops,os.path.join(PATH_DATA,'busstops.geojson'))
+    writeOutputData(busstops,os.path.join(os.path.dirname(__file__),os.path.join(PATH_DATA,'busstops.geojson')))
     print 'task done...'
     
     
